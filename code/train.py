@@ -64,7 +64,7 @@ def train(args):
             model_inputs = batch['model_inputs']
             out = model({
                 'image': model_inputs['image'].to(device),
-                'text_input': model_inputs['text_input'].to(device)
+                'text_input': model_inputs['text_input']
             })
 
             # Loss
@@ -126,7 +126,7 @@ def eval(model, loader, device):
             model_inputs = batch['model_inputs']
             out = model({
                 'image': model_inputs['image'].to(device),
-                'text_input': model_inputs['text_input'].to(device)
+                'text_input': model_inputs['text_input']
             })
 
             labels = torch.tensor((batch['labels'])).to(device).reshape(-1, 1)
