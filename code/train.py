@@ -61,7 +61,11 @@ def train(args):
             model.train()
             optimiser.zero_grad()
 
-            out = model(batch['model_inputs'])
+            model_inputs = batch['model_inputs']
+            out = model({
+                'image': model_inputs['image'].to(device),
+                'text_input': model_inputs['text_input'].to(device)
+            })
 
             # Loss
             labels = torch.tensor((batch['labels'])).to(device).reshape(-1, 1).float()
@@ -119,7 +123,11 @@ def eval(model, loader, device):
 
         for idx, batch in enumerate(loader):
             
-            out = model(batch['model_inputs'])
+            model_inputs = batch['model_inputs']
+            out = model({
+                'image': model_inputs['image'].to(device),
+                'text_input': model_inputs['text_input'].to(device)
+            })
 
             labels = torch.tensor((batch['labels'])).to(device).reshape(-1, 1)
 
