@@ -81,7 +81,7 @@ class Collate(object):
 
         return {
             'model_inputs': {
-                'image': imgs, # Need debugging. This should be a tensor.
+                'image': imgs,
                 'text_input': texts,
             },
             'labels': labels,
