@@ -9,6 +9,8 @@ class BLIPCls(torch.nn.Module):
         self.blip, self.vis_processors, self.txt_processors = lavis.models.load_model_and_preprocess(name="blip_feature_extractor", model_type="base", is_eval=False, device=device)
 
         self.cls_head = torch.nn.Linear(768, 1)
+        
+        self.to(device)
 
     def forward(self, blip_inputs):
         

@@ -61,7 +61,11 @@ def train(args):
             model.train()
             optimiser.zero_grad()
 
-            out = model(batch['model_inputs'])
+            model_inputs = batch['model_inputs']
+            out = model({
+                'image': model_inputs['image'].to(device),
+                'text_input': model_inputs['text_input']
+            })
 
             # Loss
             labels = torch.tensor((batch['labels'])).to(device).reshape(-1, 1).float()
@@ -81,7 +85,7 @@ def train(args):
         running_loss = 0
 
         # Eval
-        if epoch % 2 == 0:
+        if epoch % 5 == 0:
 
             prec, recall, f1 = eval(model, dev_loader, device)
             writer.add_scalar('dev/prec', prec, n_iter)
@@ -119,7 +123,11 @@ def eval(model, loader, device):
 
         for idx, batch in enumerate(loader):
             
-            out = model(batch['model_inputs'])
+            model_inputs = batch['model_inputs']
+            out = model({
+                'image': model_inputs['image'].to(device),
+                'text_input': model_inputs['text_input']
+            })
 
             labels = torch.tensor((batch['labels'])).to(device).reshape(-1, 1)
 
@@ -147,7 +155,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', default=32, type=int)
     parser.add_argument('--batch_size_dev', default=16, type=int)
 
-    parser.add_argument('--lr', default=2e-6, type=float)
+    parser.add_argument('--lr', default=1e-5, type=float)
     parser.add_argument('--n_epoch', default=1000, type=int)
     parser.add_argument('--checkpoint', default='', type=str) 
 
