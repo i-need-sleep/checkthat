@@ -21,7 +21,13 @@ data/*/*
 *.png
 
 # Models
+*.bin
 *.pt
+
+# Outputs
+results/checkpoints/*/*
+results/outputs/*/*
+results/runs/*/*
 
 # sh
 *.err
