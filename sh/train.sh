@@ -20,5 +20,6 @@ cd /l/users/yichen.huang/checkthat/code   # 切到程序目录
 echo "START"               # 输出起始信息
 source /apps/local/anaconda3/bin/activate preslav          # 调用 virtual env
 python -u train.py  \
-    --name finetune_blip_mm
+    --name finetune_blip_mm \
+    --lr 5e-5
 echo "FINISH"                       # 输出起始信息
