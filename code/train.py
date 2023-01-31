@@ -13,12 +13,17 @@ def train(args):
     
     print(args)
 
+    # Debug
+    if args.debug:
+        args.batch_size = 3
+        args.batch_size_dev = 3
+
     # Device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(device)
 
     # Load a pretrained BLIP model and pre-processors
-    model = models.blip_classifier.BLIPCls(device)
+    model = models.blip_classifier.BLIPCls(args, device)
     vis_processor, txt_processor = model.get_processors()
 
     # Build the datasets
@@ -78,6 +83,7 @@ def train(args):
             n_iter += 1
             writer.add_scalar('loss/cls_loss', loss, n_iter)
             running_loss += loss.detach()
+            print(loss)
 
         step_loss = running_loss / (n_iter - n_prev_iter)
         print(f'Training loss: {step_loss}')
@@ -159,6 +165,13 @@ if __name__ == '__main__':
     parser.add_argument('--n_epoch', default=1000, type=int)
     parser.add_argument('--checkpoint', default='', type=str) 
 
+    # Ablations
+    parser.add_argument('--text_only', action='store_true')
+    parser.add_argument('--image_only', action='store_true')
+
+    # Debug
+    parser.add_argument('--debug', action='store_true')
+    
     args = parser.parse_args()
 
     train(args)
