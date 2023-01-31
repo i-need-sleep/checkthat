@@ -85,7 +85,7 @@ def train(args):
         running_loss = 0
 
         # Eval
-        if epoch % 5 == 0:
+        if epoch % 10 == 0:
 
             prec, recall, f1 = eval(model, dev_loader, device)
             writer.add_scalar('dev/prec', prec, n_iter)
