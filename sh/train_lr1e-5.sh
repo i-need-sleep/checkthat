@@ -21,6 +21,5 @@ echo "START"               # 输出起始信息
 source /apps/local/anaconda3/bin/activate preslav          # 调用 virtual env
 python -u train.py  \
     --name finetune_blip_mm_lr1e-5 \
-    --lr 1e-5 \
-    --checkpoint ../results/checkpoints/finetune_blip_mm/batchsize32_lr1e-05_295_71_0.5308641975308642.bin
+    --lr 1e-5 
 echo "FINISH"                       # 输出起始信息
