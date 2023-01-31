@@ -54,7 +54,8 @@ class MMClaimsDataset(Dataset):
             'text': text,
             'img': img,
             'label': label,
-            'tweet_id': line['tweet_id']
+            'tweet_id': line['tweet_id'],
+            'image_path': line["image_path"]
         }
 
 class Collate(object):
@@ -64,11 +65,13 @@ class Collate(object):
         self.vis_processor = vis_processor
 
     def __call__(self, batch):
-        texts, labels, tweet_ids = [], [], []
+        texts, labels, tweet_ids, image_paths = [], [], [], []
 
         for line_idx, line in enumerate(batch):
             labels.append(line['label'])
             tweet_ids.append(line['tweet_id'])
+            image_paths.append(line['image_path'])
+            
 
             text = self.txt_processor(line['text'])
             texts.append(text)
@@ -85,7 +88,8 @@ class Collate(object):
                 'text_input': texts,
             },
             'labels': labels,
-            'tweeet_ids': tweet_ids
+            'tweeet_ids': tweet_ids,
+            'image_paths': image_paths
         }
 
 def make_loader(txt_path, img_dir, txt_processor, vis_processor, batch_size, shuffle=True):
