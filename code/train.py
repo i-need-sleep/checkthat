@@ -24,7 +24,7 @@ def train(args):
     # Build the datasets
     img_dir = 'labeled'
     txt_path_train = 'labeled/CT23_1A_checkworthy_multimodal_english_train.jsonl'
-    txt_path_dev = 'labeled/CT23_1A_checkworthy_multimodal_english_train.jsonl'
+    txt_path_dev = 'labeled/CT23_1A_checkworthy_multimodal_english_dev.jsonl'
     train_loader = utils.dataset.make_loader(txt_path_train, img_dir, txt_processor, vis_processor, args.batch_size)
     dev_loader = utils.dataset.make_loader(txt_path_dev, img_dir, txt_processor, vis_processor, args.batch_size_dev)
 
