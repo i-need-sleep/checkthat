@@ -83,7 +83,6 @@ def train(args):
             n_iter += 1
             writer.add_scalar('loss/cls_loss', loss, n_iter)
             running_loss += loss.detach()
-            print(loss)
 
         step_loss = running_loss / (n_iter - n_prev_iter)
         print(f'Training loss: {step_loss}')
