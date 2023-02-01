@@ -5,7 +5,7 @@ import datetime
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
-import models.blip_classifier
+import models.mm_classifier
 import utils.dataset
 import utils.eval_utils
 
@@ -23,7 +23,7 @@ def train(args):
     print(device)
 
     # Load a pretrained BLIP model and pre-processors
-    model = models.blip_classifier.BLIPCls(args, device)
+    model = models.mm_classifier.MMCls(args, device)
     vis_processor, txt_processor = model.get_processors()
 
     # Build the datasets
@@ -84,6 +84,9 @@ def train(args):
             writer.add_scalar('loss/cls_loss', loss, n_iter)
             running_loss += loss.detach()
 
+            if args.debug and batch_idx > 2:
+                break
+
         step_loss = running_loss / (n_iter - n_prev_iter)
         print(f'Training loss: {step_loss}')
         n_prev_iter = n_iter
@@ -101,21 +104,26 @@ def train(args):
             if f1 > best_f1:
                 best_f1 = f1
 
-            try:
-                os.makedirs(f'../results/checkpoints/{args.name}')
-            except:
-                pass
+            if not args.debug:
 
-            save_path = f'../results/checkpoints/{args.name}/batchsize{args.batch_size}_lr{args.lr}_{epoch}_{batch_idx}_{best_f1}.bin'
+                try:
+                    os.makedirs(f'../results/checkpoints/{args.name}')
+                except:
+                    pass
 
-            print(f'Best f1: {best_f1}')
-            print(f'Saving the checkpoint at {save_path}')
-            torch.save({
-                'epoch': epoch,
-                'step': n_iter,
-                'model_state_dict': model.state_dict(),
-                'optimiser_state_dict': optimiser.state_dict(),
-                }, save_path)
+                save_path = f'../results/checkpoints/{args.name}/batchsize{args.batch_size}_lr{args.lr}_{epoch}_{batch_idx}_{best_f1}.bin'
+
+                print(f'Best f1: {best_f1}')
+                print(f'Saving the checkpoint at {save_path}')
+                torch.save({
+                    'epoch': epoch,
+                    'step': n_iter,
+                    'model_state_dict': model.state_dict(),
+                    'optimiser_state_dict': optimiser.state_dict(),
+                    }, save_path)
+
+        if args.debug and epoch > 2:
+                break
                     
     print('DONE !!!')
     return
@@ -143,6 +151,9 @@ def eval(model, loader, device):
             hits = preds * labels
             hits = hits.detach()
             n_hit += torch.sum(hits > 0.5).detach().item()
+
+            if args.debug and idx > 2:
+                break
             
         prec, recall, f1 = utils.eval_utils.prec_recall_f1(n_pred, n_ref, n_hit)
 
@@ -164,7 +175,11 @@ if __name__ == '__main__':
     parser.add_argument('--n_epoch', default=1000, type=int)
     parser.add_argument('--checkpoint', default='', type=str) 
 
-    # Ablations
+    # Model Config
+    parser.add_argument('--model', default='blip', type=str) 
+    parser.add_argument('--pooling', default='', type=str) 
+
+    # Ablations: Modality
     parser.add_argument('--text_only', action='store_true')
     parser.add_argument('--image_only', action='store_true')
 
