@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=finetune_blip_mm_lr1e-4_       # 任务名
+#SBATCH --job-name=finetune_blip_mm_lr1e-4_cont1_       # 任务名
 #SBATCH --nodes=1                   # 这里不用动 多节点脚本请查官方文档
 #SBATCH --ntasks=1                  # 这里不用动 多任务脚本请查官方文档
 #SBATCH --cpus-per-task=4           # 要几块CPU (一般4块就够用了)
@@ -20,6 +20,7 @@ cd /l/users/yichen.huang/checkthat/code   # 切到程序目录
 echo "START"               # 输出起始信息
 source /apps/local/anaconda3/bin/activate preslav          # 调用 virtual env
 python -u train.py  \
-    --name finetune_blip_mm_lr1e-4 \
-    --lr 1e-4
+    --name finetune_blip_mm_lr1e-4_cont1_ \
+    --lr 1e-4 \
+    --checkpoint ../results/checkpoints/finetune_blip_mm_lr1e-4/batchsize32_lr0.0001_780_71_0.728476821192053.bin
 echo "FINISH"                       # 输出起始信息
