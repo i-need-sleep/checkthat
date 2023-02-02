@@ -34,9 +34,6 @@ class MMCls(torch.nn.Module):
         else:
             model_out = self.model.extract_features(inputs)
             embs = model_out['multimodal_embeds']
-            print(embs)
-            print(embs.shape)
-            exit()
 
         if self.args.pooling == '':
             # Slice off the first emb dim

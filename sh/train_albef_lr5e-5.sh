@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=finetune_blip_mm_albef_lr5e-5_       # 任务名
+#SBATCH --job-name=finetune_albef_mm_lr5e-5_       # 任务名
 #SBATCH --nodes=1                   # 这里不用动 多节点脚本请查官方文档
 #SBATCH --ntasks=1                  # 这里不用动 多任务脚本请查官方文档
 #SBATCH --cpus-per-task=4           # 要几块CPU (一般4块就够用了)
@@ -20,7 +20,7 @@ cd /l/users/yichen.huang/checkthat/code   # 切到程序目录
 echo "START"               # 输出起始信息
 source /apps/local/anaconda3/bin/activate preslav          # 调用 virtual env
 python -u train.py  \
-    --name finetune_blip_mm_albef_lr5e-5_ \
+    --name finetune_albef_mm_lr5e-5_ \
     --lr 5e-5 \
     --model albef
 echo "FINISH"                       # 输出起始信息
