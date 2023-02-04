@@ -30,8 +30,8 @@ def train(args):
     img_dir = 'labeled'
     txt_path_train = 'labeled/CT23_1A_checkworthy_multimodal_english_train.jsonl'
     txt_path_dev = 'labeled/CT23_1A_checkworthy_multimodal_english_dev.jsonl'
-    train_loader = utils.dataset.make_loader(txt_path_train, img_dir, txt_processor, vis_processor, args.batch_size)
-    dev_loader = utils.dataset.make_loader(txt_path_dev, img_dir, txt_processor, vis_processor, args.batch_size_dev)
+    train_loader = utils.dataset.make_loader(txt_path_train, img_dir, txt_processor, vis_processor, args.batch_size, args)
+    dev_loader = utils.dataset.make_loader(txt_path_dev, img_dir, txt_processor, vis_processor, args.batch_size_dev, args)
 
     # Setup Tensorboard
     date_str = str(datetime.datetime.now())[:-7].replace(':','-')
@@ -182,6 +182,7 @@ if __name__ == '__main__':
     # Ablations: Modality
     parser.add_argument('--text_only', action='store_true')
     parser.add_argument('--image_only', action='store_true')
+    parser.add_argument('--no_ocr', action='store_true')
 
     # Debug
     parser.add_argument('--debug', action='store_true')

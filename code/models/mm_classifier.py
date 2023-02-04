@@ -24,11 +24,11 @@ class MMCls(torch.nn.Module):
     def forward(self, inputs):
         
         if self.args.text_only:
-            inputs = {'text_input': inputs['text_input']}
+            inputs = {'text_input': inputs['text_input'], 'image': None}
             model_out = self.model.extract_features(inputs, mode='text')
             embs = model_out['text_embeds']
         elif self.args.image_only:
-            inputs = {'image': inputs['image']}
+            inputs = {'image': inputs['image'], 'text_input': None}
             model_out = self.model.extract_features(inputs, mode='image')
             embs = model_out['image_embeds']
         else:

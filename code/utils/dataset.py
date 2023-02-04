@@ -9,11 +9,11 @@ import lavis
 DATA_DIR = '../data'
 
 class MMClaimsDataset(Dataset):
-    def __init__(self, txt_path, img_dir):
+    def __init__(self, txt_path, img_dir, args):
         
         self.txt_path = f'{DATA_DIR}/{txt_path}'
         self.img_dir = f'{DATA_DIR}/{img_dir}'
-
+        self.args = args
 
         # Read the jsonl file. Store the data in a long list.
         self.data = self._prep_data()
@@ -36,7 +36,7 @@ class MMClaimsDataset(Dataset):
         line = self.data[index]
 
         # Concatenate the tweet and ocr texts
-        text = f'{line["tweet_text"]} {line["ocr_text"]}'.replace('\\n', ' ')
+        text = f'{line["tweet_text"]} {line["ocr_text"] if not self.args.no_ocr else ""}'.replace('\\n', ' ')
 
         # Load the raw image
         img_path = f'{self.img_dir}/{line["image_path"]}'
@@ -92,8 +92,8 @@ class Collate(object):
             'image_paths': image_paths
         }
 
-def make_loader(txt_path, img_dir, txt_processor, vis_processor, batch_size, shuffle=True):
-    dataset = MMClaimsDataset(txt_path, img_dir)
+def make_loader(txt_path, img_dir, txt_processor, vis_processor, batch_size, args, shuffle=True):
+    dataset = MMClaimsDataset(txt_path, img_dir, args)
     collate = Collate(txt_processor, vis_processor)
     loader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate, shuffle=shuffle)
     return loader
