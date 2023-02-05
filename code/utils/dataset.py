@@ -1,5 +1,6 @@
 from PIL import Image
 import jsonlines
+import json
 
 import torch
 from torch.utils.data import Dataset, DataLoader
@@ -17,6 +18,12 @@ class MMClaimsDataset(Dataset):
 
         # Read the jsonl file. Store the data in a long list.
         self.data = self._prep_data()
+
+        # Read the retrieved metadata
+        if args.metadata:
+            metadata_path = f'../data/retrieved/{args.split}.json'
+            with open(metadata_path, 'r') as f:
+                self.metadata = json.load(f)
 
     def _prep_data(self):
 
@@ -37,6 +44,27 @@ class MMClaimsDataset(Dataset):
 
         # Concatenate the tweet and ocr texts
         text = f'{line["tweet_text"]} {line["ocr_text"] if not self.args.no_ocr else ""}'.replace('\\n', ' ')
+
+        # Concatenate flattened metadata
+        if self.args.metadata:
+            line_metadata = self.metadata[line['tweet_id']]
+            if 'n_likes' in line_metadata.keys() and 'n_retwets' in line_metadata.keys():
+                text += f' This Tweet is liked {line_metadata["n_likes"]} times and retweeted {line_metadata["n_retweets"]} times.'
+            if 'author_name' in line_metadata.keys():
+                text += f' The author of this Tweet is {line_metadata["author_name"]}'
+            if 'verified' in line_metadata.keys():
+                if line_metadata["verified"]:
+                    text += 'The author is verified.'
+                else:
+                    text += 'The author is not verified.'
+            if 'n_followers' in line_metadata.keys() and line_metadata["n_followers"] != None:
+                text += f' The author has {line_metadata["n_followers"]} followers.'
+            if 'n_following' in line_metadata.keys() and line_metadata["n_following"] != None:
+                text += f' The author is following {line_metadata["n_following"]} users.'
+            if 'n_listed' in line_metadata.keys() and line_metadata["n_listed"] != None:
+                text += f' The author has {line_metadata["n_listed"]} Tweets.'
+            if 'bio' in line_metadata.keys():
+                text += f' The bio of the author is {line_metadata["bio"]}'
 
         # Load the raw image
         img_path = f'{self.img_dir}/{line["image_path"]}'
