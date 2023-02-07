@@ -109,9 +109,13 @@ if __name__ == '__main__':
     # Inference
     parser.add_argument('--no_eval', action='store_true')
 
-    # Ablations
+    # Ablations: Modality
     parser.add_argument('--text_only', action='store_true')
     parser.add_argument('--image_only', action='store_true')
+    parser.add_argument('--no_ocr', action='store_true')
+
+    # Metadata
+    parser.add_argument('--metadata', action='store_true')
 
     # Debug
     parser.add_argument('--debug', action='store_true')
