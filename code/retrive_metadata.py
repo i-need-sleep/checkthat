@@ -1,5 +1,5 @@
 import requests
-import os
+import time
 import json
 import jsonlines
 import argparse
@@ -67,14 +67,16 @@ def retrieve_metadata(args):
         with open(retrieved_path, 'r') as f:
             retrieved = json.load(f)
     except:
+        print('Retrieved json not found')
         pass
 
     out = {}
     for i, id in tqdm.tqdm(enumerate(ids)):
         if id not in retrieved.keys():
             try:
-                out['id'] = get_metadata(id)
-            except:
+                out[id] = get_metadata(id)
+            except Exception as e:
+                print(e)
                 break
     
     # Take the union of the two dicts
@@ -91,12 +93,24 @@ def get_metadata(id):
     # # Number of likes
     url = create_url_like_lookup(id)
     json_response = connect_to_endpoint(url)
-    n_likes = len(json_response['data'])
+
+    # If the Tweet is not found
+    if ('errors' in json_response.keys() and json_response['errors'][0]['title'] in ['Not Found Error', 'Authorization Error']):
+        return {}
+    elif 'meta' in json_response.keys() and 'result_count' in json_response['meta'].keys() and json_response['meta']['result_count'] == 0:
+        n_likes = 0
+    else:
+        n_likes = len(json_response['data'])
 
     # Number of retweets
     url = create_url_retweet_lookup(id)
     json_response = connect_to_endpoint(url)
-    n_retweets = len(json_response['data'])
+    if ('errors' in json_response.keys() and json_response['errors'][0]['title'] in ['Not Found Error', 'Authorization Error']):
+        return {}
+    elif 'meta' in json_response.keys() and json_response['meta'] == {'result_count': 0}:
+        n_retweets = 0
+    else:
+        n_retweets = len(json_response['data'])
 
     # In the case where the Tweet is no longer available
     try:
@@ -141,5 +155,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    retrieve_metadata(args)
+    for i in range(30):
+        print(i)
+        retrieve_metadata(args)
+        time.sleep(61 * 15)
     
