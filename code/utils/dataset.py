@@ -10,7 +10,7 @@ import lavis
 DATA_DIR = '../data'
 
 class MMClaimsDataset(Dataset):
-    def __init__(self, txt_path, img_dir, args):
+    def __init__(self, txt_path, img_dir, metadata_path, args):
         
         self.txt_path = f'{DATA_DIR}/{txt_path}'
         self.img_dir = f'{DATA_DIR}/{img_dir}'
@@ -21,7 +21,7 @@ class MMClaimsDataset(Dataset):
 
         # Read the retrieved metadata
         if args.metadata:
-            metadata_path = f'../data/retrieved/{args.split}.json'
+            metadata_path = f'{DATA_DIR}/{metadata_path}'
             with open(metadata_path, 'r') as f:
                 self.metadata = json.load(f)
 
@@ -51,12 +51,12 @@ class MMClaimsDataset(Dataset):
             if 'n_likes' in line_metadata.keys() and 'n_retwets' in line_metadata.keys():
                 text += f' This Tweet is liked {line_metadata["n_likes"]} times and retweeted {line_metadata["n_retweets"]} times.'
             if 'author_name' in line_metadata.keys():
-                text += f' The author of this Tweet is {line_metadata["author_name"]}'
+                text += f' The author of this Tweet is {line_metadata["author_name"]}.'
             if 'verified' in line_metadata.keys():
                 if line_metadata["verified"]:
-                    text += 'The author is verified.'
+                    text += ' The author is verified.'
                 else:
-                    text += 'The author is not verified.'
+                    text += ' The author is not verified.'
             if 'n_followers' in line_metadata.keys() and line_metadata["n_followers"] != None:
                 text += f' The author has {line_metadata["n_followers"]} followers.'
             if 'n_following' in line_metadata.keys() and line_metadata["n_following"] != None:
@@ -120,8 +120,8 @@ class Collate(object):
             'image_paths': image_paths
         }
 
-def make_loader(txt_path, img_dir, txt_processor, vis_processor, batch_size, args, shuffle=True):
-    dataset = MMClaimsDataset(txt_path, img_dir, args)
+def make_loader(txt_path, img_dir, txt_processor, vis_processor, batch_size, metadata_path, args, shuffle=True):
+    dataset = MMClaimsDataset(txt_path, img_dir, metadata_path, args)
     collate = Collate(txt_processor, vis_processor)
     loader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate, shuffle=shuffle)
     return loader

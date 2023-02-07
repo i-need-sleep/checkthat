@@ -27,7 +27,8 @@ def inference(args):
     # Build the datasets
     img_dir = 'labeled'
     txt_path_dev_test = 'labeled/CT23_1A_checkworthy_multimodal_english_dev_test.jsonl'
-    dev_test_loader = utils.dataset.make_loader(txt_path_dev_test, img_dir, txt_processor, vis_processor, args.batch_size)
+    metadata_path_dev_test = 'retrieved/dev_test.json'
+    dev_test_loader = utils.dataset.make_loader(txt_path_dev_test, img_dir, txt_processor, vis_processor, metadata_path_dev_test, args.batch_size)
 
     # Load from checkpoints
     print(f'loading checkpoint: {args.checkpoint}')

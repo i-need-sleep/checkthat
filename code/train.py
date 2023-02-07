@@ -30,8 +30,10 @@ def train(args):
     img_dir = 'labeled'
     txt_path_train = 'labeled/CT23_1A_checkworthy_multimodal_english_train.jsonl'
     txt_path_dev = 'labeled/CT23_1A_checkworthy_multimodal_english_dev.jsonl'
-    train_loader = utils.dataset.make_loader(txt_path_train, img_dir, txt_processor, vis_processor, args.batch_size, args)
-    dev_loader = utils.dataset.make_loader(txt_path_dev, img_dir, txt_processor, vis_processor, args.batch_size_dev, args)
+    metadata_path_train = 'retrieved/train.json'
+    metadata_path_dev = 'retrieved/dev.json'
+    train_loader = utils.dataset.make_loader(txt_path_train, img_dir, txt_processor, vis_processor, args.batch_size, metadata_path_train, args)
+    dev_loader = utils.dataset.make_loader(txt_path_dev, img_dir, txt_processor, vis_processor, args.batch_size_dev, metadata_path_dev, args)
 
     # Setup Tensorboard
     date_str = str(datetime.datetime.now())[:-7].replace(':','-')
