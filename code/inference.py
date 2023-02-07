@@ -3,7 +3,7 @@ import argparse
 
 import torch
 
-import models.blip_classifier
+import models.mm_classifier
 import utils.dataset
 import utils.eval_utils
 
@@ -21,14 +21,14 @@ def inference(args):
     print(device)
 
     # Load a pretrained BLIP model and pre-processors
-    model = models.blip_classifier.BLIPCls(args, device)
+    model = models.mm_classifier.MMCls(args, device)
     vis_processor, txt_processor = model.get_processors()
 
     # Build the datasets
     img_dir = 'labeled'
     txt_path_dev_test = 'labeled/CT23_1A_checkworthy_multimodal_english_dev_test.jsonl'
     metadata_path_dev_test = 'retrieved/dev_test.json'
-    dev_test_loader = utils.dataset.make_loader(txt_path_dev_test, img_dir, txt_processor, vis_processor, metadata_path_dev_test, args.batch_size)
+    dev_test_loader = utils.dataset.make_loader(txt_path_dev_test, img_dir, txt_processor, vis_processor, args.batch_size, metadata_path_dev_test, args)
 
     # Load from checkpoints
     print(f'loading checkpoint: {args.checkpoint}')
