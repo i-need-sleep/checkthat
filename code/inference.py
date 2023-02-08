@@ -13,8 +13,9 @@ def inference(args):
     if args.debug:
         args.batch_size = 3
         args.batch_size_dev = 3
-        args.checkpoint = '../results/checkpoints/debug.bin'
+        args.checkpoint = '../results/checkpoints/albef_mm.bin'
         args.name = 'debug'
+        args.model = 'albef'
 
     # Device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
