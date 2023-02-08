@@ -107,6 +107,10 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', default=32, type=int)
     parser.add_argument('--checkpoint', default='', type=str) 
 
+    # Model Config
+    parser.add_argument('--model', default='blip', type=str) 
+    parser.add_argument('--pooling', default='', type=str) 
+
     # Inference
     parser.add_argument('--no_eval', action='store_true')
 
