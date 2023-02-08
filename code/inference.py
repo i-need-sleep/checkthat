@@ -13,9 +13,8 @@ def inference(args):
     if args.debug:
         args.batch_size = 3
         args.batch_size_dev = 3
-        args.checkpoint = '../results/checkpoints/albef_mm.bin'
+        args.checkpoint = '../results/checkpoints/albef__batchsize32_lr0.0001_510_71_0.7549668874172186.bin'
         args.name = 'debug'
-        args.model = 'albef'
 
     # Device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -27,8 +26,12 @@ def inference(args):
 
     # Build the datasets
     img_dir = 'labeled'
-    txt_path_dev_test = 'labeled/CT23_1A_checkworthy_multimodal_english_dev_test.jsonl'
-    metadata_path_dev_test = 'retrieved/dev_test.json'
+    if args.dev_set:
+        txt_path_dev_test = 'labeled/CT23_1A_checkworthy_multimodal_english_dev.jsonl'
+        metadata_path_dev_test = 'retrieved/dev.json'
+    else:
+        txt_path_dev_test = 'labeled/CT23_1A_checkworthy_multimodal_english_dev_test.jsonl'
+        metadata_path_dev_test = 'retrieved/dev_test.json'
     dev_test_loader = utils.dataset.make_loader(txt_path_dev_test, img_dir, txt_processor, vis_processor, args.batch_size, metadata_path_dev_test, args)
 
     # Load from checkpoints
@@ -91,11 +94,9 @@ def inference(args):
             print(f'F1: {f1}, prec: {prec}, recall: {recall}')
         
         # Store inference results
-        path = f'../results/outputs/{args.name}.json'
+        path = f'../results/outputs/{args.name}{"_dev" if args.dev_set else ""}.json'
         with open(path, 'w') as f:
             json.dump(inference_out, f)
-        
-        return
 
     return
 
@@ -114,6 +115,7 @@ if __name__ == '__main__':
 
     # Inference
     parser.add_argument('--no_eval', action='store_true')
+    parser.add_argument('--dev_set', action='store_true')
 
     # Ablations: Modality
     parser.add_argument('--text_only', action='store_true')
