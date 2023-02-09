@@ -11,3 +11,9 @@ def prec_recall_f1(n_pred, n_ref, n_hit):
         f1 = 0
 
     return prec, recall, f1
+
+def format_prec_recall_f1(prec, recall, f1):
+    prec = '{:.3f}'.format(prec)
+    recall = '{:.3f}'.format(recall)
+    f1 = '{:.3f}'.format(f1)
+    return prec, recall, f1
