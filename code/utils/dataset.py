@@ -91,8 +91,6 @@ class MMClaimsDataset(Dataset):
                 text += f' The author has {line_metadata["n_listed"]} Tweets.'
             if 'bio' in line_metadata.keys():
                 text += f' The bio of the author is {line_metadata["bio"]}'
-        print(text)
-        exit()
 
         # Load the raw image
         img_path = f'{self.img_dir}/{line["image_path"]}'
