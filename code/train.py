@@ -188,6 +188,7 @@ if __name__ == '__main__':
 
     # Metadata
     parser.add_argument('--metadata', action='store_true')
+    parser.add_argument('--metadata_bin', default='', type=str) 
 
     # Debug
     parser.add_argument('--debug', action='store_true')

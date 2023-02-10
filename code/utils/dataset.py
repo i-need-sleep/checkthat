@@ -25,6 +25,15 @@ class MMClaimsDataset(Dataset):
             with open(metadata_path, 'r') as f:
                 self.metadata = json.load(f)
 
+            metadata_stats_path = f'{DATA_DIR}/retrieved/statistics.json'
+            with open(metadata_stats_path, 'r') as f:
+                self.metadata_stats = json.load(f)
+
+                if args.metadata_bin == 'mean':
+                    self.metadata_stats = self.metadata_stats['mean']
+                elif args.metadata_bin == 'median':
+                    self.metadata_stats = self.metadata_stats['median']
+
     def _prep_data(self):
 
         data = []
@@ -48,7 +57,16 @@ class MMClaimsDataset(Dataset):
         # Concatenate flattened metadata
         if self.args.metadata:
             line_metadata = self.metadata[line['tweet_id']]
-            if 'n_likes' in line_metadata.keys() and 'n_retwets' in line_metadata.keys():
+            if 'n_likes' in line_metadata.keys() and 'n_retweets' in line_metadata.keys():
+                if self.args.metadata_bin in ['mean', 'median']:
+                    if line_metadata["n_likes"] > self.metadata_stats['n_likes']:
+                        line_metadata["n_likes"] = 'a high number of'
+                    else:
+                        line_metadata["n_likes"] = 'a low number of'
+                    if line_metadata["n_retweets"] > self.metadata_stats['n_retweets']:
+                        line_metadata["n_retweets"] = 'a high number of'
+                    else:
+                        line_metadata["n_retweets"] = 'a low number of'
                 text += f' This Tweet is liked {line_metadata["n_likes"]} times and retweeted {line_metadata["n_retweets"]} times.'
             if 'author_name' in line_metadata.keys():
                 text += f' The author of this Tweet is {line_metadata["author_name"]}.'
@@ -58,13 +76,23 @@ class MMClaimsDataset(Dataset):
                 else:
                     text += ' The author is not verified.'
             if 'n_followers' in line_metadata.keys() and line_metadata["n_followers"] != None:
+                if self.args.metadata_bin in ['mean', 'median']:
+                    if line_metadata["n_followers"] > self.metadata_stats['n_followers']:
+                        line_metadata["n_followers"] = 'a high number of'
+                    else:
+                        line_metadata["n_followers"] = 'a low number of'
                 text += f' The author has {line_metadata["n_followers"]} followers.'
-            if 'n_following' in line_metadata.keys() and line_metadata["n_following"] != None:
-                text += f' The author is following {line_metadata["n_following"]} users.'
             if 'n_listed' in line_metadata.keys() and line_metadata["n_listed"] != None:
+                if self.args.metadata_bin in ['mean', 'median']:
+                    if line_metadata["n_listed"] > self.metadata_stats['n_followers']:
+                        line_metadata["n_listed"] = 'a high number of'
+                    else:
+                        line_metadata["n_listed"] = 'a low number of'
                 text += f' The author has {line_metadata["n_listed"]} Tweets.'
             if 'bio' in line_metadata.keys():
                 text += f' The bio of the author is {line_metadata["bio"]}'
+        print(text)
+        exit()
 
         # Load the raw image
         img_path = f'{self.img_dir}/{line["image_path"]}'
