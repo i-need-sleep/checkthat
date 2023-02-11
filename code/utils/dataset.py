@@ -1,6 +1,7 @@
 from PIL import Image
 import jsonlines
 import json
+import copy
 
 import torch
 from torch.utils.data import Dataset, DataLoader
@@ -49,7 +50,7 @@ class MMClaimsDataset(Dataset):
 
     def __getitem__(self, index):
 
-        line = self.data[index]
+        line = copy.deepcopy(self.data[index])
 
         # Concatenate the tweet and ocr texts
         text = f'{line["tweet_text"]} {line["ocr_text"] if not self.args.no_ocr else ""}'.replace('\\n', ' ')
