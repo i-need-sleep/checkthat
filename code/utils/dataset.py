@@ -50,14 +50,14 @@ class MMClaimsDataset(Dataset):
 
     def __getitem__(self, index):
 
-        line = copy.deepcopy(self.data[index])
+        line = self.data[index]
 
         # Concatenate the tweet and ocr texts
         text = f'{line["tweet_text"]} {line["ocr_text"] if not self.args.no_ocr else ""}'.replace('\\n', ' ')
 
         # Concatenate flattened metadata
         if self.args.metadata:
-            line_metadata = self.metadata[line['tweet_id']]
+            line_metadata = copy.deepcopy(self.metadata[line['tweet_id']])
             if 'n_likes' in line_metadata.keys() and 'n_retweets' in line_metadata.keys():
                 if self.args.metadata_bin in ['mean', 'median']:
                     if line_metadata["n_likes"] > self.metadata_stats['n_likes']:
